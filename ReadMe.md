@@ -20,7 +20,7 @@ This is a lightweight SwiftUI recipe application that fetches and displays recip
 
 | List View | Detail View |
 |-----------|-------------|
-| ![List](./Assets/readme1.png) | ![Detail](./Assets/readme2.png) | ![Detail](./Assets/readme3.png) |
+| ![List](./RecipeApp/Assets/readme1.png) | ![Detail](./RecipeApp/Assets/readme2.png) | ![Detail](./RecipeApp/Assets/readme3.png) |
 
 ---
 
