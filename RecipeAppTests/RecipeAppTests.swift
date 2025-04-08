@@ -8,29 +8,53 @@
 import XCTest
 @testable import RecipeApp
 
+@MainActor
 final class RecipeAppTests: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    func testMalformedDataThrowsError() async {
+        let service = RecipeServiceMock(responseType: .malformed)
+        let vm = RecipeListViewModel(service: service)
+
+        await vm.fetchRecipes()
+        XCTAssertEqual(vm.error, .malformedData)
     }
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    func testEmptyDataHandledProperly() async {
+        let service = RecipeServiceMock(responseType: .empty)
+        let vm = RecipeListViewModel(service: service)
+
+        await vm.fetchRecipes()
+        XCTAssertTrue(vm.recipes.isEmpty)
+        XCTAssertNil(vm.error)
     }
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
+    func testSuccessfulDataFetch() async {
+        let service = RecipeServiceMock(responseType: .success)
+        let vm = RecipeListViewModel(service: service)
+
+        await vm.fetchRecipes()
+        XCTAssertEqual(vm.recipes.count, 1)
+        XCTAssertEqual(vm.recipes.first?.name, "Test Recipe")
+        XCTAssertNil(vm.error)
     }
 
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+    func testApplySortingByName() async {
+        let vm = RecipeListViewModel()
+        vm.recipes = [
+            Recipe(uuid: UUID(), name: "Banana Cake", cuisine: "French", photoURLSmall: nil, photoURLLarge: nil, sourceURL: nil, youtubeURL: nil),
+            Recipe(uuid: UUID(), name: "Apple Pie", cuisine: "American", photoURLSmall: nil, photoURLLarge: nil, sourceURL: nil, youtubeURL: nil)
+        ]
+        vm.sortType = .name
+        XCTAssertEqual(vm.sortedRecipes.map { $0.name }, ["Apple Pie", "Banana Cake"])
     }
 
+    func testApplySortingByCuisine() async {
+        let vm = RecipeListViewModel()
+        vm.recipes = [
+            Recipe(uuid: UUID(), name: "Sushi", cuisine: "Japanese", photoURLSmall: nil, photoURLLarge: nil, sourceURL: nil, youtubeURL: nil),
+            Recipe(uuid: UUID(), name: "Tacos", cuisine: "Mexican", photoURLSmall: nil, photoURLLarge: nil, sourceURL: nil, youtubeURL: nil)
+        ]
+        vm.sortType = .cuisine
+        XCTAssertEqual(vm.sortedRecipes.map { $0.cuisine }, ["Japanese", "Mexican"])
+    }
 }
