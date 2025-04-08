@@ -12,7 +12,7 @@ This is a lightweight SwiftUI recipe application that fetches and displays recip
 - Manual image caching to disk (no URLCache, no third-party)
 - Sort by name or cuisine
 - Async/await used throughout
-- Pull to refresh (custom UIKit-based)
+- Pull to refresh
 - Graceful handling of malformed/empty data
 - Unit and UI test coverage
 
@@ -52,7 +52,6 @@ I chose these areas because they reflect real-world production concerns like arc
 
 ### ⚖️ Trade-offs and Decisions
 
-- Replaced SwiftUI’s `.refreshable {}` with a **UIKit-based UIRefreshControl** to prevent scroll animation bugs and layout glitches.
 - Built a **custom image cache manager** using `FileManager` instead of relying on URLCache.
 - Skipped deep filtering/search to focus on clean data flow and testability.
 
